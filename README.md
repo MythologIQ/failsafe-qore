@@ -235,6 +235,21 @@ Installer options:
 - `--write-config <path>` to persist resolved values
 - `--force-reconfigure` to recreate existing service labels
 
+Update path (after initial install):
+
+```bash
+npm run zo:update:dry-run
+npm run zo:update
+```
+
+Updater behavior:
+- fetches latest `origin/main`
+- snapshots runtime state under `.failsafe/backups`
+- applies fast-forward update
+- runs verification gates (`typecheck`, `test`, `lint`, `build`)
+- re-registers services
+- rolls back to previous commit and state snapshot on failure
+
 Manual Zo service registration equivalent:
 
 ```bash
@@ -278,6 +293,8 @@ Resilience operations:
 - `npm run zo:backups` to list available snapshots
 - `npm run zo:restore:dry-run -- --from <backupDir>` to validate restore inputs
 - `node scripts/zo-resilience.mjs restore --from <backupDir> --confirm RESTORE` to apply restore
+- `npm run zo:update:dry-run` to check if upstream update is available
+- `npm run zo:update` to apply rollback-safe repository update
 
 Systemd bootstrap path (non-Zo Linux hosts):
 

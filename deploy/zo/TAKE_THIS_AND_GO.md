@@ -100,6 +100,15 @@ npm run zo:restore:dry-run -- --from /path/to/.failsafe/backups/<timestamp>
 node scripts/zo-resilience.mjs restore --from /path/to/.failsafe/backups/<timestamp> --confirm RESTORE
 ```
 
+Auto-update commands:
+
+```bash
+npm run zo:update:dry-run
+npm run zo:update
+```
+
+`zo:update` runs backup, repo fast-forward, verification, service re-registration, and rollback on failure.
+
 ## Option 2: Process Mode (No Service)
 
 ```bash

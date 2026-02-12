@@ -25,6 +25,8 @@
     "start:standalone": "node dist/runtime/service/start.js",
     "zo:one-click": "bash deploy/zo/one-click-standalone.sh",
     "zo:install:full": "bash deploy/zo/install-zo-full.sh",
+    "zo:update": "bash deploy/zo/update-from-repo.sh",
+    "zo:update:dry-run": "bash deploy/zo/update-from-repo.sh --dry-run",
     "zo:stop": "bash deploy/zo/stop-standalone.sh",
     "zo:services": "bash deploy/zo/one-click-services.sh",
     "qorectl:doctor": "node scripts/qorectl.mjs doctor",

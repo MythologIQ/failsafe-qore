@@ -101,3 +101,11 @@ Status: `planned`
 2. Restore flow rejects missing manifest, missing files, and checksum mismatches.
 3. Backup assets are isolated under `.failsafe/backups` and do not include build artifacts.
 4. Typecheck/tests/lint/build pass after changes.
+
+## Sprint 4 Scope (Current)
+
+1. Implement rollback-safe repo auto-update flow for Zo deployments. `implemented`
+2. Integrate update flow with existing backup/restore and installer reconfigure path. `implemented`
+3. Add operator docs for update dry-run and execution mode. `implemented`
+4. Validate via typecheck/tests/lint/build and script syntax checks. `pending`
+5. Record adversarial findings against updater safety model. `pending`
