@@ -29,6 +29,8 @@ Last reviewed: 2026-02-12.
 | Zo bootstrap script supports pull-install-build-service setup | implemented | `deploy/zo/bootstrap-zo.sh:1`, `deploy/zo/env.example:1` |
 | Zo one-page handoff install guide is available for direct operator use | implemented | `deploy/zo/TAKE_THIS_AND_GO.md:1` |
 | Zo single-step launcher script is available for take-this-and-go setup | implemented | `deploy/zo/take-this-and-go.sh:1` |
+| Controlled release artifact builder generates versioned bundle and SHA256 checksums | implemented | `scripts/create-release-artifacts.mjs:1` |
+| Tag-driven GitHub release workflow publishes bundle and verification files | implemented | `.github/workflows/release-artifacts.yml:1` |
 | Model suggestion performance regression test suite exists | implemented | `tests/zo.model.selection.performance.test.ts:1` |
 | Zo MCP proxy integration test baseline exists | implemented | `tests/zo.mcp.proxy.integration.test.ts:59` |
 | Zo SSH fallback controls in this repository | implemented | `docs/phase3_zo_fallback_setup.md:1` |

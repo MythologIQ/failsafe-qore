@@ -171,6 +171,28 @@ Then upload `dist/failsafe-qore-zo-bundle.tgz` to Zo and extract under `/opt/fai
 
 Quick handoff doc: `deploy/zo/TAKE_THIS_AND_GO.md`.
 
+## Controlled Release
+
+Create versioned release artifacts locally:
+
+```bash
+npm run release:artifacts
+```
+
+Output:
+- `dist/release/vX.Y.Z/failsafe-qore-zo-bundle-vX.Y.Z.tgz`
+- `dist/release/vX.Y.Z/SHA256SUMS`
+- `dist/release/vX.Y.Z/TAKE_THIS_AND_GO.md`
+- `dist/release/vX.Y.Z/RELEASE_NOTES.md`
+
+Verify before install:
+
+```bash
+sha256sum -c SHA256SUMS
+```
+
+Tag push (`v*`) also triggers GitHub release artifact publishing via `.github/workflows/release-artifacts.yml`.
+
 ## Documentation Map
 
 - Architecture plan: `docs/plan_qore_zo_architecture.md`

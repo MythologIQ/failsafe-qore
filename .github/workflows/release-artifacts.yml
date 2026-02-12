@@ -1,0 +1,52 @@
+name: Release Artifacts
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: "Release version (for example 0.1.0)"
+        required: false
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build release artifacts
+        env:
+          RELEASE_VERSION: ${{ inputs.release_version }}
+        run: npm run release:artifacts
+      - name: Resolve release directory
+        id: release_dir
+        run: |
+          VERSION="${{ inputs.release_version }}"
+          if [ -z "$VERSION" ]; then
+            if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+              VERSION="${GITHUB_REF#refs/tags/v}"
+            else
+              VERSION="$(node -p "require('./package.json').version")"
+            fi
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "dir=dist/release/v$VERSION" >> "$GITHUB_OUTPUT"
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.release_dir.outputs.version }}
+          files: |
+            ${{ steps.release_dir.outputs.dir }}/failsafe-qore-zo-bundle-v${{ steps.release_dir.outputs.version }}.tgz
+            ${{ steps.release_dir.outputs.dir }}/SHA256SUMS
+            ${{ steps.release_dir.outputs.dir }}/TAKE_THIS_AND_GO.md
+            ${{ steps.release_dir.outputs.dir }}/RELEASE_NOTES.md
+          body_path: ${{ steps.release_dir.outputs.dir }}/RELEASE_NOTES.md

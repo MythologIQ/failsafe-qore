@@ -25,7 +25,8 @@
     "assumptions:check": "node scripts/check-zo-assumptions.mjs",
     "release:gate": "node scripts/release-gate.mjs",
     "verify:all": "npm run typecheck && npm run lint && npm test && npm run build && npm run assumptions:check",
-    "zo:bundle": "powershell -ExecutionPolicy Bypass -File scripts/create-zo-upload.ps1"
+    "zo:bundle": "powershell -ExecutionPolicy Bypass -File scripts/create-zo-upload.ps1",
+    "release:artifacts": "node scripts/create-release-artifacts.mjs"
   },
   "dependencies": {
     "@mythologiq/qore-contracts": "github:MythologIQ/qore-contracts#main",
