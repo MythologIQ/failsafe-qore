@@ -6,10 +6,10 @@ import { execSync, spawn } from "child_process";
 const root = process.cwd();
 const destination = path.resolve(root, "zo", "ui-shell", "shared");
 const localSource = path.resolve(root, "..", "FailSafe", "FailSafe", "extension", "src", "roadmap", "ui");
-const faviconSource = path.resolve(root, "ZoQoreLogo.png");
-const sideBannerSource = fs.existsSync(path.resolve(root, "ZoQore-SideBanner.png"))
-  ? path.resolve(root, "ZoQore-SideBanner.png")
-  : path.resolve(root, "ZoQoreLogo.png");
+const faviconSource = path.resolve(root, "assets", "branding", "ZoQoreLogo.png");
+const sideBannerSource = fs.existsSync(path.resolve(root, "assets", "branding", "ZoQore-SideBanner.png"))
+  ? path.resolve(root, "assets", "branding", "ZoQore-SideBanner.png")
+  : path.resolve(root, "assets", "branding", "ZoQoreLogo.png");
 const sideBannerTargetName = "zoqore-side-banner.png";
 const customLegacySource = path.resolve(root, "zo", "ui-shell", "custom", "legacy");
 

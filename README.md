@@ -3,6 +3,26 @@
 FailSafe-Qore is MythologIQ's Zo-native governance runtime.
 Current release: `Zo-Qore 1.0.0` (2026-02-13).
 
+## Here's how you can get started with Zo-Qore.
+
+1. Create a Zo account: https://zo.computer
+2. Use a paid Zo tier for full hosted setup (runtime + UI requires at least 2 services).
+3. Run the installer:
+
+```bash
+git clone https://github.com/MythologIQ/failsafe-qore.git FailSafe-Qore
+cd FailSafe-Qore
+bash deploy/zo/install-zo-full.sh
+```
+
+If you are on Zo free tier (single service), use local/process mode:
+
+```bash
+npm ci
+export QORE_API_KEY="replace-with-strong-secret"
+npm run zo:one-click
+```
+
 [![Node](https://img.shields.io/badge/node-20+-green.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -66,17 +86,17 @@ For step-by-step install troubleshooting:
 
 ### Branding
 
-![Zo-Qore Logo](ZoQoreLogo.png)
-![Zo-Qore Poster](ZoQorePoster.png)
+![Zo-Qore Logo](assets/branding/ZoQoreLogo.png)
+![Zo-Qore Poster](assets/branding/ZoQorePoster.png)
 
 ### Product Views
 
-![Zo-Qore Home](Marketing/Zo-Qore-Home.PNG)
-![Zo-Qore Run](Marketing/Zo-Qore-Run.png)
-![Zo-Qore Comms](Marketing/Zo-Qore-Comms.png)
-![Zo-Qore Governance](Marketing/Zo-Qore-Governance.png)
-![Zo-Qore Skill Library](Marketing/Zo-Qore-SkillLibrary.png)
-![Zo-Qore Reports](Marketing/Zo-Qore-Reports.png)
+![Zo-Qore Home](assets/screenshots/Zo-Qore-Home.PNG)
+![Zo-Qore Run](assets/screenshots/Zo-Qore-Run.png)
+![Zo-Qore Comms](assets/screenshots/Zo-Qore-Comms.png)
+![Zo-Qore Governance](assets/screenshots/Zo-Qore-Governance.png)
+![Zo-Qore Skill Library](assets/screenshots/Zo-Qore-SkillLibrary.png)
+![Zo-Qore Reports](assets/screenshots/Zo-Qore-Reports.png)
 
 ## What This Repository Is
 

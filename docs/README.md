@@ -28,6 +28,7 @@ This index tracks the authoritative planning, implementation, and validation art
 - `docs/phase9_handoff_and_governance_closeout.md`: handoff and governance closeout artifact.
 - `docs/adversarial_review_phase6_phase9.md`: adversarial review for phases 6 through 9.
 - `docs/ZO_ASSUMPTION_EVIDENCE.json`: Zo assumption evidence registry for freshness checks.
+- `docs/security/SECURITY_AUDIT_REPORT.md`: security audit summary and remediation status.
 - `docs/META_LEDGER.md`: append-only architecture decision ledger for high-impact governance choices.
 - `docs/LOCAL_IDE_ADAPTER_CONTRACT.md`: stable integration contract for FailSafe local IDE node adapter.
 - `docs/ADAPTER_COMPATIBILITY_CHECKLIST.md`: drift-prevention checklist for divergent UI adapter tracks.
