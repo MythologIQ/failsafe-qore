@@ -10,8 +10,8 @@ Current release: `Zo-Qore 1.0.0` (2026-02-13).
 3. Run the installer:
 
 ```bash
-git clone https://github.com/MythologIQ/failsafe-qore.git FailSafe-Qore
-cd FailSafe-Qore
+git clone https://github.com/MythologIQ/failsafe-qore.git Zo-Qore
+cd Zo-Qore
 bash deploy/zo/install-zo-full.sh
 ```
 
@@ -35,8 +35,8 @@ If you are a new user, use this first.
 ### Zo install (recommended)
 
 ```bash
-git clone https://github.com/MythologIQ/failsafe-qore.git FailSafe-Qore
-cd FailSafe-Qore
+git clone https://github.com/MythologIQ/failsafe-qore.git Zo-Qore
+cd Zo-Qore
 bash deploy/zo/install-zo-full.sh
 ```
 
@@ -451,7 +451,7 @@ register_user_service \
   --label "qore-runtime" \
   --protocol "http" \
   --local-port 7777 \
-  --workdir "/home/workspace/MythologIQ/FailSafe-Qore" \
+  --workdir "/home/workspace/MythologIQ/Zo-Qore" \
   --entrypoint "node dist/runtime/service/start.js" \
   --env-vars "QORE_API_HOST=0.0.0.0,QORE_API_PORT=7777"
 
@@ -459,9 +459,9 @@ register_user_service \
   --label "qore-ui" \
   --protocol "http" \
   --local-port 9380 \
-  --workdir "/home/workspace/MythologIQ/FailSafe-Qore" \
+  --workdir "/home/workspace/MythologIQ/Zo-Qore" \
   --entrypoint "node dist/zo/ui-shell/start.js" \
-  --env-vars "QORE_UI_HOST=0.0.0.0,QORE_UI_PORT=9380,QORE_RUNTIME_BASE_URL=http://127.0.0.1:7777,QORE_UI_ASSETS_DIR=/home/workspace/MythologIQ/FailSafe-Qore/zo/ui-shell/shared,QORE_UI_REQUIRE_AUTH=true,QORE_UI_REQUIRE_MFA=true,QORE_UI_BASIC_AUTH_USER=admin,QORE_UI_BASIC_AUTH_PASS=change-this-password,QORE_UI_TOTP_SECRET=replace-with-base32-secret,QORE_UI_ADMIN_TOKEN=replace-with-admin-token"
+  --env-vars "QORE_UI_HOST=0.0.0.0,QORE_UI_PORT=9380,QORE_RUNTIME_BASE_URL=http://127.0.0.1:7777,QORE_UI_ASSETS_DIR=/home/workspace/MythologIQ/Zo-Qore/zo/ui-shell/shared,QORE_UI_REQUIRE_AUTH=true,QORE_UI_REQUIRE_MFA=true,QORE_UI_BASIC_AUTH_USER=admin,QORE_UI_BASIC_AUTH_PASS=change-this-password,QORE_UI_TOTP_SECRET=replace-with-base32-secret,QORE_UI_ADMIN_TOKEN=replace-with-admin-token"
 ```
 
 MFA bootstrap:

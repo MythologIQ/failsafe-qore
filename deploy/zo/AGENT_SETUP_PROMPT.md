@@ -9,7 +9,7 @@ Repository:
 https://github.com/MythologIQ/failsafe-qore
 
 Install target:
-/home/workspace/MythologIQ/FailSafe-Qore
+/home/workspace/MythologIQ/Zo-Qore
 
 Required behavior:
 1) Clone repository into the target path.

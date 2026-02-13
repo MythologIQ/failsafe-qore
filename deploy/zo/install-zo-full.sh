@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/MythologIQ/failsafe-qore.git}"
 BRANCH="${BRANCH:-main}"
-INSTALL_DIR="${INSTALL_DIR:-/home/workspace/MythologIQ/FailSafe-Qore}"
+INSTALL_DIR="${INSTALL_DIR:-/home/workspace/MythologIQ/Zo-Qore}"
 WORKDIR="${WORKDIR:-}"
 
 RUNTIME_LABEL="${RUNTIME_LABEL:-qore-runtime}"

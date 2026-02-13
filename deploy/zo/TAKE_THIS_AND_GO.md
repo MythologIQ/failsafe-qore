@@ -11,8 +11,8 @@ This document is the fastest path to a working Zo-Qore installation, with explic
 Run these commands in Zo terminal:
 
 ```bash
-git clone https://github.com/MythologIQ/failsafe-qore.git FailSafe-Qore
-cd FailSafe-Qore
+git clone https://github.com/MythologIQ/failsafe-qore.git Zo-Qore
+cd Zo-Qore
 bash deploy/zo/install-zo-full.sh
 ```
 
@@ -61,7 +61,7 @@ bash deploy/zo/install-zo-full.sh --force-reconfigure
 ## 4) If You Prefer Process Mode (No Zo Service Registration)
 
 ```bash
-cd /home/workspace/MythologIQ/FailSafe-Qore
+cd /home/workspace/MythologIQ/Zo-Qore
 export QORE_API_KEY="<your-key>"
 bash deploy/zo/one-click-standalone.sh
 ```
@@ -118,7 +118,7 @@ rm -f .failsafe/zo-native-ai.env
 If you prefer not to use Zo native AI, you can run services in standalone mode:
 
 ```bash
-cd /home/workspace/MythologIQ/FailSafe-Qore
+cd /home/workspace/MythologIQ/Zo-Qore
 export QORE_API_KEY="replace-with-strong-secret"
 bash deploy/zo/one-click-standalone.sh
 ```
@@ -149,9 +149,9 @@ Cause:
 Fix:
 
 ```bash
-rm -rf /home/workspace/MythologIQ/FailSafe-Qore
-git clone https://github.com/MythologIQ/failsafe-qore.git FailSafe-Qore
-cd FailSafe-Qore
+rm -rf /home/workspace/MythologIQ/Zo-Qore
+git clone https://github.com/MythologIQ/failsafe-qore.git Zo-Qore
+cd Zo-Qore
 bash deploy/zo/install-zo-full.sh
 ```
 
@@ -164,7 +164,7 @@ Cause:
 Fix:
 
 ```bash
-cd /home/workspace/MythologIQ/FailSafe-Qore
+cd /home/workspace/MythologIQ/Zo-Qore
 npm run ui:sync
 npm run build
 ```
@@ -254,14 +254,14 @@ If you want a Zo in-app agent to run setup for you, use:
 Remove active Zo-Qore services plus current install directory:
 
 ```bash
-cd /home/workspace/MythologIQ/FailSafe-Qore
+cd /home/workspace/MythologIQ/Zo-Qore
 bash deploy/zo/install-zo-full.sh --uninstall
 ```
 
 Also remove first-test bootstrap artifacts (`/opt/failsafe-qore-test*` and `/etc/failsafe-qore-test`):
 
 ```bash
-cd /home/workspace/MythologIQ/FailSafe-Qore
+cd /home/workspace/MythologIQ/Zo-Qore
 bash deploy/zo/install-zo-full.sh --uninstall --cleanup-legacy-test
 ```
 
