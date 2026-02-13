@@ -283,9 +283,9 @@ ensure_repo() {
   mkdir -p "$(dirname "${INSTALL_DIR}")"
   if [[ -d "${INSTALL_DIR}/.git" ]]; then
     log "updating repository in ${INSTALL_DIR}" >&2
-    git -C "${INSTALL_DIR}" fetch --all --prune
-    git -C "${INSTALL_DIR}" checkout "${BRANCH}"
-    git -C "${INSTALL_DIR}" pull --ff-only origin "${BRANCH}"
+    git -C "${INSTALL_DIR}" fetch --all --prune >&2
+    git -C "${INSTALL_DIR}" checkout "${BRANCH}" >&2
+    git -C "${INSTALL_DIR}" pull --ff-only origin "${BRANCH}" >&2
   elif [[ -d "${INSTALL_DIR}" && "$(ls -A "${INSTALL_DIR}" 2>/dev/null || true)" != "" ]]; then
     if has_repo "${INSTALL_DIR}"; then
       log "using existing repository content in ${INSTALL_DIR}" >&2
@@ -294,7 +294,7 @@ ensure_repo() {
     fi
   else
     log "cloning ${REPO_URL} (${BRANCH}) into ${INSTALL_DIR}" >&2
-    git clone --branch "${BRANCH}" "${REPO_URL}" "${INSTALL_DIR}"
+    git clone --branch "${BRANCH}" "${REPO_URL}" "${INSTALL_DIR}" >&2
   fi
 
   printf '%s' "${INSTALL_DIR}"
