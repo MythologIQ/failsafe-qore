@@ -437,7 +437,7 @@ print_summary() {
 }
 
 print_zo_ai_handoff() {
-  cat <<'EOF'
+  cat <<EOF
 
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║                     ZO NATIVE AI SETUP HANDOFF                              ║
@@ -482,17 +482,17 @@ Steps to complete:
    export UI_PORT="${UI_PORT}"
    export QORE_UI_HOST="${UI_HOST}"
    export RUNTIME_BASE_URL="http://127.0.0.1:${RUNTIME_PORT}"
-   export QORE_UI_BASIC_AUTH_USER="${QORE_UI_BASIC_AUTH_USER}"
-   export QORE_UI_BASIC_AUTH_PASS="${QORE_UI_BASIC_AUTH_PASS}"
-   export QORE_UI_TOTP_SECRET="${QORE_UI_TOTP_SECRET}"
-   export QORE_UI_ADMIN_TOKEN="${QORE_UI_ADMIN_TOKEN}"
+   export QORE_UI_BASIC_AUTH_USER="<set-from-installer-generated-secret>"
+   export QORE_UI_BASIC_AUTH_PASS="<set-from-installer-generated-secret>"
+   export QORE_UI_TOTP_SECRET="<set-from-installer-generated-secret>"
+   export QORE_UI_ADMIN_TOKEN="<set-from-installer-generated-secret>"
    cd "${repo_dir}"
    bash deploy/zo/register-ui-user-service.sh
 
 3. Verify services are healthy:
    service_doctor ${RUNTIME_LABEL}
    service_doctor ${UI_LABEL}
-   curl -H "x-qore-api-key: ${QORE_API_KEY}" http://127.0.0.1:${RUNTIME_PORT}/health
+   curl -H "x-qore-api-key: <set-from-installer-generated-secret>" http://127.0.0.1:${RUNTIME_PORT}/health
 
 4. Print final URLs:
    echo "Runtime URL: https://${RUNTIME_LABEL}-<zo-host>.zocomputer.io"
@@ -575,16 +575,6 @@ main() {
     log "Zo user service registration not available"
     log "Installation preparation complete. Service registration requires Zo native AI."
     print_zo_ai_handoff
-    
-    # Export secrets for Zo native AI to use
-    log ""
-    log "Exported secrets for Zo native AI:"
-    log "export QORE_API_KEY='${QORE_API_KEY}'"
-    log "export QORE_UI_BASIC_AUTH_USER='${QORE_UI_BASIC_AUTH_USER}'"
-    log "export QORE_UI_BASIC_AUTH_PASS='${QORE_UI_BASIC_AUTH_PASS}'"
-    log "export QORE_UI_TOTP_SECRET='${QORE_UI_TOTP_SECRET}'"
-    log "export QORE_UI_ADMIN_TOKEN='${QORE_UI_ADMIN_TOKEN}'"
-    log ""
     log "Copy the prompt above and paste it into your Zo native AI to complete setup."
   fi
 }
