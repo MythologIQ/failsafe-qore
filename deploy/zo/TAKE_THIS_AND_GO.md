@@ -101,6 +101,18 @@ Fix:
 
 4. The Zo native AI will register the services and verify they are healthy
 
+Security hardening for handoff (`implemented`):
+
+- The installer writes handoff secrets to `./.failsafe/zo-native-ai.env` with `0600` permissions.
+- The handoff prompt references `source ./.failsafe/zo-native-ai.env` instead of printing plaintext secrets.
+- After service registration completes, remove the handoff file:
+
+```bash
+rm -f .failsafe/zo-native-ai.env
+```
+
+- If any terminal/log capture occurred during setup, rotate all generated secrets before enabling runtime.
+
 **Alternative: Standalone Mode**
 
 If you prefer not to use Zo native AI, you can run services in standalone mode:

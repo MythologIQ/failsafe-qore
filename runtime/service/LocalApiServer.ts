@@ -14,6 +14,7 @@ export interface LocalApiServerOptions {
   port?: number;
   apiKey?: string;
   requireAuth?: boolean;
+  publicHealth?: boolean;
   maxBodyBytes?: number;
   rateLimitMaxRequests?: number;
   rateLimitWindowMs?: number;
@@ -41,6 +42,7 @@ export class LocalApiServer {
   async start(): Promise<void> {
     if (this.server) return;
     const requireAuth = this.options.requireAuth ?? true;
+    const publicHealth = this.options.publicHealth ?? false;
     const apiKey = this.options.apiKey ?? process.env.QORE_API_KEY;
     if (requireAuth && !apiKey) {
       throw new RuntimeError(
@@ -56,6 +58,9 @@ export class LocalApiServer {
         const url = req.url ?? "/";
 
         if (method === "GET" && url === "/health") {
+          if (requireAuth && !publicHealth) {
+            this.ensureAuthorized(req, requireAuth, apiKey);
+          }
           return this.sendJson(res, 200, this.runtime.health());
         }
 

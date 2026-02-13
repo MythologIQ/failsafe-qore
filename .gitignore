@@ -11,3 +11,5 @@ Thumbs.db
 .vscode/
 .failsafe/
 .agent/
+PRIVATE/
+docs-private/

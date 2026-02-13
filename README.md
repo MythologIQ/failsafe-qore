@@ -41,6 +41,7 @@ bash deploy/zo/install-zo-full.sh
 ```
 
 This provisions runtime + UI, security defaults, and service registration. If `register_user_service` is not available in your Zo environment, the installer will provide a prompt to copy and paste into your Zo native AI to complete service registration.
+In that handoff path, generated secrets are written to `./.failsafe/zo-native-ai.env` (mode `0600`) and referenced by the prompt via `source` instead of being printed in plaintext.
 
 Installer prompt behavior (`implemented`):
 
@@ -49,6 +50,7 @@ Installer prompt behavior (`implemented`):
 - Use `bash deploy/zo/install-zo-full.sh --non-interactive` for automation with no prompts.
 - In interactive mode, sensitive secrets rotate by default and are not preserved from prior shell environment values.
 - Config file output is opt-in via `--write-config <path>` because it stores resolved secrets.
+- After Zo native AI handoff succeeds, remove `./.failsafe/zo-native-ai.env` and rotate credentials if setup logs were captured.
 
 ### Public one-line install (download + run)
 
@@ -179,6 +181,7 @@ Design guardrail: Zo-specific behavior stays in adapter layers under `zo/`. Core
 | `deploy/systemd/`            | Service templates for runtime and fallback watcher                    |
 | `tests/`                     | Unit and integration validation                                       |
 | `docs/`                      | Phase plans, adversarial reviews, and substantiation artifacts        |
+| `PRIVATE/`                   | Local-only isolated workspace artifacts (`docs`, `scripts`, `tests`)  |
 
 ## Quick Start
 
@@ -215,6 +218,11 @@ npm run build
 $env:QORE_API_KEY="change-me"
 node dist/runtime/service/start.js
 ```
+
+Runtime auth controls:
+
+- `QORE_API_KEY` (required when auth is enabled; default runtime mode)
+- `QORE_API_PUBLIC_HEALTH` (default `false`; when `true`, `/health` is public while other runtime endpoints still require API key)
 
 Example evaluation call:
 

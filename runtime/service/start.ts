@@ -14,6 +14,9 @@ async function main(): Promise<void> {
   const apiHost = process.env.QORE_API_HOST ?? "127.0.0.1";
   const apiPort = Number(process.env.QORE_API_PORT ?? "7777");
   const apiKey = process.env.QORE_API_KEY;
+  const publicHealth =
+    String(process.env.QORE_API_PUBLIC_HEALTH ?? "false").toLowerCase() ===
+    "true";
 
   const ledger = new LedgerManager({
     ledgerPath,
@@ -32,6 +35,7 @@ async function main(): Promise<void> {
     port: apiPort,
     apiKey,
     requireAuth: true,
+    publicHealth,
     maxBodyBytes: 64 * 1024,
   });
   await api.start();

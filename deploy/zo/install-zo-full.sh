@@ -21,6 +21,7 @@ UNINSTALL=false
 CLEANUP_LEGACY_TEST=false
 CONFIG_FILE=""
 WRITE_CONFIG_FILE=""
+HANDOFF_ENV_FILE=""
 
 log() {
   printf '[failsafe-qore-zo-install] %s\n' "$*"
@@ -376,6 +377,20 @@ write_config_file() {
   log "wrote config: ${WRITE_CONFIG_FILE}"
 }
 
+write_zo_handoff_env_file() {
+  local repo_dir="$1"
+  HANDOFF_ENV_FILE="${repo_dir}/.failsafe/zo-native-ai.env"
+  mkdir -p "$(dirname "${HANDOFF_ENV_FILE}")"
+  {
+    printf 'export QORE_API_KEY=%q\n' "${QORE_API_KEY}"
+    printf 'export QORE_UI_BASIC_AUTH_USER=%q\n' "${QORE_UI_BASIC_AUTH_USER}"
+    printf 'export QORE_UI_BASIC_AUTH_PASS=%q\n' "${QORE_UI_BASIC_AUTH_PASS}"
+    printf 'export QORE_UI_TOTP_SECRET=%q\n' "${QORE_UI_TOTP_SECRET}"
+    printf 'export QORE_UI_ADMIN_TOKEN=%q\n' "${QORE_UI_ADMIN_TOKEN}"
+  } > "${HANDOFF_ENV_FILE}"
+  chmod 600 "${HANDOFF_ENV_FILE}" || true
+}
+
 validate_or_prepare_services() {
   local runtime_exists=false
   local ui_exists=false
@@ -460,6 +475,7 @@ Runtime Label: ${RUNTIME_LABEL}
 UI Label: ${UI_LABEL}
 Runtime Port: ${RUNTIME_PORT}
 UI Port: ${UI_PORT}
+Secrets File: ${HANDOFF_ENV_FILE}
 
 Required environment variables (already generated):
 - QORE_API_KEY=$(mask_secret "${QORE_API_KEY}")
@@ -470,6 +486,7 @@ Required environment variables (already generated):
 
 Steps to complete:
 1. Register runtime service with these commands:
+   source "${HANDOFF_ENV_FILE}"
    export SERVICE_LABEL="${RUNTIME_LABEL}"
    export SERVICE_PORT="${RUNTIME_PORT}"
    export QORE_API_HOST="${RUNTIME_HOST}"
@@ -478,21 +495,21 @@ Steps to complete:
    bash deploy/zo/register-user-service.sh
 
 2. Register UI service with these commands:
+   source "${HANDOFF_ENV_FILE}"
    export UI_LABEL="${UI_LABEL}"
    export UI_PORT="${UI_PORT}"
    export QORE_UI_HOST="${UI_HOST}"
    export RUNTIME_BASE_URL="http://127.0.0.1:${RUNTIME_PORT}"
-   export QORE_UI_BASIC_AUTH_USER="<set-from-installer-generated-secret>"
-   export QORE_UI_BASIC_AUTH_PASS="<set-from-installer-generated-secret>"
-   export QORE_UI_TOTP_SECRET="<set-from-installer-generated-secret>"
-   export QORE_UI_ADMIN_TOKEN="<set-from-installer-generated-secret>"
    cd "${repo_dir}"
    bash deploy/zo/register-ui-user-service.sh
 
 3. Verify services are healthy:
-   service_doctor ${RUNTIME_LABEL}
-   service_doctor ${UI_LABEL}
-   curl -H "x-qore-api-key: <set-from-installer-generated-secret>" http://127.0.0.1:${RUNTIME_PORT}/health
+   if command -v service_doctor >/dev/null 2>&1; then
+     service_doctor ${RUNTIME_LABEL}
+     service_doctor ${UI_LABEL}
+   fi
+   source "${HANDOFF_ENV_FILE}"
+   curl -H "x-qore-api-key: ${QORE_API_KEY}" http://127.0.0.1:${RUNTIME_PORT}/health
 
 4. Print final URLs:
    echo "Runtime URL: https://${RUNTIME_LABEL}-<zo-host>.zocomputer.io"
@@ -506,6 +523,10 @@ diagnose and remediate automatically. Retry until success.
 After Zo native AI completes the setup, you can access your services at:
 - Runtime: http://${RUNTIME_HOST}:${RUNTIME_PORT}
 - UI: http://${UI_HOST}:${UI_PORT}
+- Security hardening now:
+  - rotate all handoff secrets immediately if any terminal/log capture occurred
+  - remove secrets file: rm -f "${HANDOFF_ENV_FILE}"
+  - confirm old API key is rejected (401/403) before re-enabling runtime
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -574,6 +595,7 @@ main() {
   else
     log "Zo user service registration not available"
     log "Installation preparation complete. Service registration requires Zo native AI."
+    write_zo_handoff_env_file "${repo_dir}"
     print_zo_ai_handoff
     log "Copy the prompt above and paste it into your Zo native AI to complete setup."
   fi
