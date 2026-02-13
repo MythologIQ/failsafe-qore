@@ -42,6 +42,14 @@ bash deploy/zo/install-zo-full.sh
 
 This provisions runtime + UI, security defaults, and service registration. If `register_user_service` is not available in your Zo environment, the installer will provide a prompt to copy and paste into your Zo native AI to complete service registration.
 
+Installer prompt behavior (`implemented`):
+
+- The installer runs in interactive mode by default.
+- For prompts like `Repository URL [https://github.com/MythologIQ/failsafe-qore.git]:`, press `Enter` to accept the default.
+- Use `bash deploy/zo/install-zo-full.sh --non-interactive` for automation with no prompts.
+- In interactive mode, sensitive secrets rotate by default and are not preserved from prior shell environment values.
+- Config file output is opt-in via `--write-config <path>` because it stores resolved secrets.
+
 ### Public one-line install (download + run)
 
 ```bash

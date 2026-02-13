@@ -282,18 +282,18 @@ ensure_repo() {
 
   mkdir -p "$(dirname "${INSTALL_DIR}")"
   if [[ -d "${INSTALL_DIR}/.git" ]]; then
-    log "updating repository in ${INSTALL_DIR}"
+    log "updating repository in ${INSTALL_DIR}" >&2
     git -C "${INSTALL_DIR}" fetch --all --prune
     git -C "${INSTALL_DIR}" checkout "${BRANCH}"
     git -C "${INSTALL_DIR}" pull --ff-only origin "${BRANCH}"
   elif [[ -d "${INSTALL_DIR}" && "$(ls -A "${INSTALL_DIR}" 2>/dev/null || true)" != "" ]]; then
     if has_repo "${INSTALL_DIR}"; then
-      log "using existing repository content in ${INSTALL_DIR}"
+      log "using existing repository content in ${INSTALL_DIR}" >&2
     else
       die "INSTALL_DIR exists and is not empty: ${INSTALL_DIR}; choose WORKDIR or clean path"
     fi
   else
-    log "cloning ${REPO_URL} (${BRANCH}) into ${INSTALL_DIR}"
+    log "cloning ${REPO_URL} (${BRANCH}) into ${INSTALL_DIR}" >&2
     git clone --branch "${BRANCH}" "${REPO_URL}" "${INSTALL_DIR}"
   fi
 
@@ -346,24 +346,10 @@ interactive_config() {
   prompt_default UI_PORT "UI port" "${UI_PORT}"
   prompt_default QORE_UI_BASIC_AUTH_USER "UI Basic Auth username" "${QORE_UI_BASIC_AUTH_USER}"
 
-  if [[ -n "${QORE_API_KEY:-}" ]]; then
-    if confirm_yes_no "Keep existing QORE_API_KEY from environment" true; then :; else unset QORE_API_KEY; fi
-  fi
-  if [[ -n "${QORE_UI_BASIC_AUTH_PASS:-}" ]]; then
-    if confirm_yes_no "Keep existing QORE_UI_BASIC_AUTH_PASS from environment" true; then :; else unset QORE_UI_BASIC_AUTH_PASS; fi
-  fi
-  if [[ -n "${QORE_UI_TOTP_SECRET:-}" ]]; then
-    if confirm_yes_no "Keep existing QORE_UI_TOTP_SECRET from environment" true; then :; else unset QORE_UI_TOTP_SECRET; fi
-  fi
-  if [[ -n "${QORE_UI_ADMIN_TOKEN:-}" ]]; then
-    if confirm_yes_no "Keep existing QORE_UI_ADMIN_TOKEN from environment" true; then :; else unset QORE_UI_ADMIN_TOKEN; fi
-  fi
-
-  if [[ -z "${WRITE_CONFIG_FILE}" ]]; then
-    if confirm_yes_no "Write resolved config file for future installs" true; then
-      WRITE_CONFIG_FILE="${INSTALL_DIR}/.failsafe/zo-installer.env"
-    fi
-  fi
+  # Security-first interactive defaults:
+  # - always rotate sensitive secrets during install
+  # - never write plaintext secret config unless explicitly requested via --write-config
+  unset QORE_API_KEY QORE_UI_BASIC_AUTH_PASS QORE_UI_TOTP_SECRET QORE_UI_ADMIN_TOKEN
 }
 
 write_config_file() {

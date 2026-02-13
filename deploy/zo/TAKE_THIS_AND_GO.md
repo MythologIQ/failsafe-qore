@@ -16,6 +16,14 @@ cd FailSafe-Qore
 bash deploy/zo/install-zo-full.sh
 ```
 
+Installer prompt behavior (`implemented`):
+
+- The installer is interactive by default and prompts for values like `Repository URL`.
+- Press `Enter` to accept the default shown in brackets (example: `Repository URL [https://github.com/MythologIQ/failsafe-qore.git]:`).
+- Use `--non-interactive` to skip prompts entirely.
+- In interactive mode, the installer rotates sensitive secrets by default and does not prompt to keep existing ones.
+- Writing `zo-installer.env` is opt-in only via `--write-config` because it stores resolved secrets.
+
 What this installer does:
 
 - installs dependencies

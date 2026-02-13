@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
-import { execSync, spawn } from "child_process";
+import { execFileSync } from "child_process";
 
 const root = process.cwd();
 const destination = path.resolve(root, "zo", "ui-shell", "shared");
@@ -93,11 +93,11 @@ function syncFromRemoteGit() {
   try {
     log(`sync source: repo (${failsafeRepo}#${branch})`);
     
-    // Security: Use argument arrays instead of string interpolation to prevent command injection
-    execSync('git', ['clone', '--depth', '1', '--filter=blob:none', '--sparse', '--branch', branch, failsafeRepo, tempRoot], {
+    // Security: Use argument arrays instead of string interpolation to prevent command injection.
+    execFileSync("git", ["clone", "--depth", "1", "--filter=blob:none", "--sparse", "--branch", branch, failsafeRepo, tempRoot], {
       stdio: "pipe",
     });
-    execSync('git', ['-C', tempRoot, 'sparse-checkout', 'set', repoUiSubdir], { stdio: "pipe" });
+    execFileSync("git", ["-C", tempRoot, "sparse-checkout", "set", repoUiSubdir], { stdio: "pipe" });
     
     const remoteSource = path.join(tempRoot, ...repoUiSubdir.split("/"));
     if (!fs.existsSync(remoteSource)) {
@@ -107,6 +107,20 @@ function syncFromRemoteGit() {
   } finally {
     removeIfExists(tempRoot);
   }
+}
+
+function createBackup(sourceDir) {
+  if (!fs.existsSync(sourceDir)) return null;
+  const tempBackup = fs.mkdtempSync(path.join(os.tmpdir(), "failsafe-ui-backup-"));
+  fs.cpSync(sourceDir, tempBackup, { recursive: true });
+  return tempBackup;
+}
+
+function restoreBackup(sourceDir, backupDir) {
+  if (!backupDir || !fs.existsSync(backupDir)) return;
+  removeIfExists(sourceDir);
+  ensureDir(sourceDir);
+  fs.cpSync(backupDir, sourceDir, { recursive: true });
 }
 
 function syncFromRemoteRaw() {
@@ -738,6 +752,7 @@ function applyCustomLegacyOverrides() {
 }
 
 function main() {
+  const backupDir = createBackup(destination);
   removeIfExists(destination);
   ensureDir(destination);
 
@@ -745,21 +760,35 @@ function main() {
   const forceLocal = process.env.FAILSAFE_UI_SOURCE === "local";
 
   if (forceLocal) {
-    syncFromLocal();
-    applyZoQoreBannerOverlay();
-    applyBrandingOverrides();
-    applyCustomLegacyOverrides();
-    log(`synced ${countFiles(destination)} files to ${destination}`);
-    return;
+    try {
+      syncFromLocal();
+      applyZoQoreBannerOverlay();
+      applyBrandingOverrides();
+      applyCustomLegacyOverrides();
+      log(`synced ${countFiles(destination)} files to ${destination}`);
+      return;
+    } catch (error) {
+      restoreBackup(destination, backupDir);
+      throw error;
+    } finally {
+      removeIfExists(backupDir);
+    }
   }
 
   if (!forceRemote && fs.existsSync(localSource)) {
-    syncFromLocal();
-    applyZoQoreBannerOverlay();
-    applyBrandingOverrides();
-    applyCustomLegacyOverrides();
-    log(`synced ${countFiles(destination)} files to ${destination}`);
-    return;
+    try {
+      syncFromLocal();
+      applyZoQoreBannerOverlay();
+      applyBrandingOverrides();
+      applyCustomLegacyOverrides();
+      log(`synced ${countFiles(destination)} files to ${destination}`);
+      return;
+    } catch (error) {
+      restoreBackup(destination, backupDir);
+      throw error;
+    } finally {
+      removeIfExists(backupDir);
+    }
   }
 
   try {
@@ -769,14 +798,20 @@ function main() {
     applyCustomLegacyOverrides();
     log(`synced ${countFiles(destination)} files to ${destination}`);
   } catch (error) {
-    removeIfExists(destination);
-    ensureDir(destination);
-    syncFromRemoteRaw();
-    applyZoQoreBannerOverlay();
-    applyBrandingOverrides();
-    applyCustomLegacyOverrides();
-    log(`synced ${countFiles(destination)} files to ${destination}`);
-    throw error;
+    try {
+      removeIfExists(destination);
+      ensureDir(destination);
+      syncFromRemoteRaw();
+      applyZoQoreBannerOverlay();
+      applyBrandingOverrides();
+      applyCustomLegacyOverrides();
+      log(`synced ${countFiles(destination)} files to ${destination}`);
+    } catch (rawError) {
+      restoreBackup(destination, backupDir);
+      throw rawError;
+    }
+  } finally {
+    removeIfExists(backupDir);
   }
 }
 
