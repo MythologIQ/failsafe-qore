@@ -91,6 +91,13 @@ describe("QoreUiShellServer", () => {
       const consoleRes = await fetch(`${baseUrl}/ui/console`);
       expect(consoleRes.status).toBe(200);
       const consoleHtml = await consoleRes.text();
+      // Diagnostic: log debug info if key element missing
+      if (!consoleHtml.includes('data-view="gantt"')) {
+        const debugRes = await fetch(`${baseUrl}/api/ui/debug`);
+        const debugInfo = await debugRes.json();
+        console.log("[DIAG] Debug info:", JSON.stringify(debugInfo, null, 2));
+        console.log("[DIAG] consoleHtml snippet:", consoleHtml.slice(0, 500));
+      }
       expect(consoleHtml.includes('data-route="skills"')).toBe(true);
       expect(consoleHtml.includes('data-route="library"')).toBe(true);
       expect(consoleHtml.includes('id="intent-template"')).toBe(true);

@@ -1429,6 +1429,19 @@ export class QoreUiShellServer {
       });
     }
 
+    // Diagnostic endpoint for debugging asset resolution
+    if (method === "GET" && pathname === "/api/ui/debug") {
+      return this.sendJson(res, 200, {
+        assetsDir: this.assetsDir,
+        cwd: process.cwd(),
+        hasLegacyIndex: this.hasUiAsset("legacy-index.html"),
+        hasIndex: this.hasUiAsset("index.html"),
+        filesInDir: fs.existsSync(this.assetsDir)
+          ? fs.readdirSync(this.assetsDir).filter((f) => f.endsWith(".html"))
+          : [],
+      });
+    }
+
     if (method !== "GET") {
       this.sendJson(res, 404, {
         error: "NOT_FOUND",
