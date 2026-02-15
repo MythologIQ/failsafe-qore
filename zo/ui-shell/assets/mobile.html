@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Zo-Qore Mobile</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Inter:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+    <div class="app-container">
+
+        <main class="content-area">
+            
+            <!-- TAB 1: STRATEGY (Projects) -->
+            <section id="tab-strategy" class="tab-content active">
+                <header class="tab-header">
+                    <h1 class="header-title">Strategy</h1>
+                    <div class="header-actions">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                </header>
+                
+                <div class="glass-card dropdown-trigger">
+                    <span>FailSafe-Qore</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+
+                <div class="glass-card sprint-card">
+                    <span class="section-label">Active Sprint</span>
+                    <div class="sprint-title">V2 Polish</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: 78%"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem; color: #8ba4cc;">
+                        <span>78% Complete</span>
+                        <span>Due in 2 days</span>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <span class="section-label">Milestone Queue</span>
+                    <div class="milestone-list">
+                        <div class="milestone-item active">
+                            <div class="milestone-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </div>
+                            <div class="milestone-info">
+                                <div style="font-weight:700; color:var(--accent-cyan); font-size:0.85rem;">Active: Refine UI</div>
+                                <div style="font-size:0.7rem; color:var(--text-muted);">Due in 2 days</div>
+                            </div>
+                        </div>
+                        <div class="milestone-item queued">
+                            <div class="milestone-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </div>
+                            <div class="milestone-info">
+                                <div style="font-weight:600; color:var(--accent-gold); font-size:0.85rem;">Queued: Auth Flow</div>
+                                <div style="font-size:0.7rem; color:var(--text-muted);">Estimated Start: Oct 28</div>
+                            </div>
+                        </div>
+                        <div class="milestone-item future" style="opacity:0.6;">
+                            <div class="milestone-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </div>
+                            <div class="milestone-info">
+                                <div style="font-weight:600; font-size:0.85rem;">Future: Audit</div>
+                                <div style="font-size:0.7rem; color:var(--text-muted);">Planned for Q4</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: CONSOLE (Engine) -->
+            <section id="tab-console" class="tab-content" style="display:none;">
+                <header class="tab-header">
+                    <h1 class="header-title">Zo-Qore Console</h1>
+                    <div class="debug-light">
+                        <span>Debug Status</span>
+                        <div class="led"></div> 
+                    </div>
+                </header>
+
+                <!-- Status Check (Hidden until requested/needed) -->
+                <!-- <div style="padding: 10px; background: rgba(255,0,0,0.1); border: 1px solid red; border-radius: 8px; margin-bottom:10px; color: #ffcccc; text-align:center; font-size:0.8rem; display:none;">System Halted. Disruption Detected.</div> -->
+
+                <!-- Deployment Stage Viz -->
+                <div class="glass-card">
+                    <span class="section-label">Deployment Stage</span>
+                    <div class="deployment-stages">
+                        <div class="stage-step done">
+                            <div class="stage-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>
+                            <div class="stage-label">Plan</div>
+                        </div>
+                        <div class="stage-step done">
+                            <div class="stage-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg></div>
+                            <div class="stage-label">Audit</div>
+                        </div>
+                        <div class="stage-step active">
+                            <div class="stage-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></div>
+                            <div class="stage-label">Implement</div>
+                        </div>
+                        <div class="stage-step">
+                            <div class="stage-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                            <div class="stage-label">Substantiate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <span class="section-label">Command Stream</span>
+                    <div class="console-output">
+                        <div class="log-entry"><span class="log-ts">[10:45:32]</span> <span class="log-sys">System:</span> Environment discovered. AWS region us-east-1 selected.</div>
+                        <div class="log-entry"><span class="log-ts">[10:45:35]</span> <span class="log-sys">System:</span> Compiling assets for production build...</div>
+                        <div class="log-entry" style="text-align: center; margin: 20px 0;"><span style="display:inline-block; border-top: 2px dashed #333; width: 40px; transform:rotate(45deg);"></span></div>
+                        <div class="log-entry" style="background: rgba(0,255,100,0.1); padding: 8px; border-left: 3px solid #00ff64; border-radius: 4px;">
+                            <span class="log-ts">[10:45:40]</span> <span class="log-agent">Agent Qore-7:</span> Verified dependencies. Proceeding with secure containerization.
+                        </div>
+                    </div>
+                    
+                    <div class="command-input-area">
+                        <input type="text" class="cmd-input" placeholder="Enter command or query..." />
+                        <button class="cmd-btn">Send &gt;</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: MONITOR (Health) -->
+            <section id="tab-monitor" class="tab-content" style="display:none;">
+                <header class="tab-header">
+                    <h1 class="header-title">System Health</h1>
+                </header>
+
+                <div class="glass-card sentinel-status-container">
+                    <span class="section-label" style="align-self: flex-start; margin-bottom: 20px;">Sentinel Status</span>
+                    <div class="big-orb"></div>
+                    <div class="status-label">Status: SECURE</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">All Systems Operational</div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="glass-card metric-box">
+                        <span class="section-label">Verdict Load</span>
+                        <div class="metric-val" id="verdict-load" style="color:#d8e5ff;">
+                            <div style="height: 40px; display: flex; align-items: flex-end; justify-content: center; gap: 4px;">
+                                <div style="background: #3d7dff; width: 6px; height: 30%; border-radius: 2px;"></div>
+                                <div style="background: #3d7dff; width: 6px; height: 50%; border-radius: 2px;"></div>
+                                <div style="background: #eab308; width: 6px; height: 80%; border-radius: 2px;"></div>
+                                <div style="background: #3d7dff; width: 6px; height: 45%; border-radius: 2px;"></div>
+                                <div style="background: #3d7dff; width: 6px; height: 60%; border-radius: 2px;" id="verdict-load-bar"></div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.7rem; color: #eab308;">65% - Moderate</div>
+                    </div>
+                    <div class="glass-card metric-box">
+                        <span class="section-label">Error Budget</span>
+                        <div class="metric-val">
+                            <div class="pie-chart"></div>
+                        </div>
+                        <div style="font-size:0.7rem; color: var(--accent-green); margin-top:8px;">Stable</div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <span class="section-label">Policy Watch</span>
+                    <div class="policy-list">
+                        <div class="policy-item">
+                            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg> RBAC: <span style="color:white; font-weight:600;">Strict</span></span>
+                            <span class="policy-status">✔</span>
+                        </div>
+                        <div class="policy-item">
+                            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg> Data Redaction: <span style="color:white; font-weight:600;">L4</span></span>
+                            <span class="policy-status">✔</span>
+                        </div>
+                        <div class="policy-item">
+                            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg> Firewall Rules: <span style="color:white; font-weight:600;">Active</span></span>
+                            <span class="policy-status">✔</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" data-target="tab-strategy">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                        <line x1="8" y1="2" x2="8" y2="18"></line>
+                        <line x1="16" y1="6" x2="16" y2="22"></line>
+                    </svg>
+                </span>
+                <span class="label">Strategy</span>
+            </button>
+            <button class="nav-item" data-target="tab-console">
+                <span class="icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                    </svg>
+                </span>
+                <span class="label">Console</span>
+            </button>
+            <button class="nav-item" data-target="tab-monitor">
+                <span class="icon">
+                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                    </svg>
+                </span>
+                <span class="label">Monitor</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="mobile.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-content');
+            const navItems = document.querySelectorAll('.nav-item');
+
+            window.switchTab = function(targetId) {
+                tabs.forEach(tab => {
+                    tab.style.display = 'none';
+                    tab.classList.remove('active');
+                });
+                
+                const targetTab = document.getElementById(targetId);
+                if (targetTab) {
+                    targetTab.style.display = 'block';
+                    // Force reflow for animation
+                    void targetTab.offsetWidth;
+                    targetTab.classList.add('active');
+                }
+
+                navItems.forEach(item => {
+                    if (item.dataset.target === targetId) {
+                        item.classList.add('active');
+                        // Color the icon if active
+                        item.querySelector('.icon svg').style.stroke = 'var(--accent-cyan)';
+                    } else {
+                        item.classList.remove('active');
+                        item.querySelector('.icon svg').style.stroke = 'currentColor';
+                    }
+                });
+            }
+
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Find closest button parent if click happened on icon
+                    const btn = e.target.closest('.nav-item');
+                    const targetId = btn.dataset.target;
+                    switchTab(targetId);
+                });
+            });
+
+            // Init
+            switchTab('tab-strategy'); // Default to Strategy as per mockup leftmost tab
+        });
+    </script>
+</body>
+</html>

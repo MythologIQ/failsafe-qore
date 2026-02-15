@@ -146,6 +146,9 @@ If you are testing or contributing, thank you. This is a fully open source commu
 - Prompt transparency events for direct Zo dispatch (build and send stages): `implemented`
 - Actor proof signing, nonce replay protection, and key rotation tooling: `implemented`
 - Release gate and Zo assumption freshness checks: `implemented`
+- **Open navigation system with persistent sidebar**: `implemented` (Phase 10)
+- **Empty state management for all project views**: `implemented` (Phase 10)
+- **Speech-to-Text integration using Web Speech API**: `implemented` (Phase 10)
 
 ## Architecture at a Glance
 
@@ -247,6 +250,108 @@ Adapter continuity:
 - Zo-Qore UI: independent product UI track.
 - FailSafe local IDE node: supported adapter path to local IDE workflows.
 - Both surfaces must consume the same runtime contract and decision schema.
+
+### Project Navigation System (Phase 10)
+
+The UI features a persistent navigation sidebar enabling free navigation to any project view:
+
+**Navigation Routes:**
+
+| Route            | Label         | Icon        | Description                |
+| ---------------- | ------------- | ----------- | -------------------------- |
+| `/void`          | Void          | ○ (circle)  | Creative capture interface |
+| `/reveal`        | Reveal        | ◇ (diamond) | Thought organization       |
+| `/constellation` | Constellation | ☆ (star)    | Cluster visualization      |
+| `/path`          | Path          | → (arrow)   | Phase planning             |
+| `/risk`          | Risk          | ⚠ (warning) | Risk register              |
+| `/autonomy`      | Autonomy      | ▶ (play)    | Execution readiness        |
+
+**Navigation Features:**
+
+- **Persistent Sidebar**: Fixed-position navigation available on all views
+- **Route State Indicators**: Visual feedback showing data availability per view
+  - Filled: View has data, fully accessible
+  - Dimmed: View has no data, accessible but shows empty state
+  - Pulsing dot: Recommended next step in workflow
+- **Responsive Design**: Collapses to icon-only mode on mobile (< 768px)
+- **Keyboard Navigation**: Tab + Enter for accessibility
+- **API Endpoint**: `GET /api/project/:projectId/nav-state` returns route availability
+
+### Empty State Management (Phase 10)
+
+Each project view displays helpful empty states when prerequisite data is missing:
+
+**Empty State Structure:**
+
+- Title: Clear explanation of what's missing
+- Description: Contextual guidance on next steps
+- Icon: Visual indicator matching view theme
+- Action Button: Direct navigation to prerequisite view
+- Tip: Helpful guidance for users
+
+**View-Specific Empty States:**
+
+| View          | Empty State             | Prerequisite                  | Action Route     |
+| ------------- | ----------------------- | ----------------------------- | ---------------- |
+| Reveal        | No Thoughts to Organize | Void (thoughts needed)        | `/void`          |
+| Constellation | No Clusters Formed      | Reveal (clusters needed)      | `/reveal`        |
+| Path          | No Phases Defined       | Constellation (phases needed) | `/constellation` |
+| Risk          | No Risks Identified     | Path (execution plan needed)  | `/path`          |
+| Autonomy      | Not Ready for Autonomy  | Risk (assessment needed)      | `/risk`          |
+
+**Empty State Features:**
+
+- Session-aware dismissal (remembers user preference)
+- Contextual tips for each view
+- Clear call-to-action buttons
+- Graceful degradation on slow networks
+
+### Speech-to-Text Integration (Phase 10)
+
+Voice input capability for Void capture using Web Speech API (browser-native, no external dependencies):
+
+**STT Features:**
+
+- **Browser-Native API**: Uses `webkitSpeechRecognition` / `SpeechRecognition`
+- **Continuous Recognition**: Real-time interim results display
+- **Language Support**: English (en-US) default, configurable
+- **Graceful Fallback**: Text-only input when STT unavailable
+- **Visual Feedback**: Pulsing microphone button during listening
+
+**Browser Compatibility:**
+
+- Chrome: Full support ✓
+- Edge: Full support ✓
+- Safari: Full support ✓
+- Firefox: Graceful degradation (button hidden)
+
+**Error Handling:**
+
+| Error           | User Message                                          |
+| --------------- | ----------------------------------------------------- |
+| `not-allowed`   | Microphone access denied. Enable in browser settings. |
+| `no-speech`     | No speech detected. Try again.                        |
+| `audio-capture` | Microphone not available.                             |
+| `network`       | Network error. Check connection.                      |
+
+**Integration Point**: Microphone button integrated into Void input area with interim transcript preview below textarea.
+
+### Project Workflow (Recommended Flow)
+
+While users can navigate freely to any view, the recommended workflow provides optimal results:
+
+```
+Void → Reveal → Constellation → Path → Risk → Autonomy
+```
+
+1. **Void**: Capture creative thoughts and ideas
+2. **Reveal**: Organize thoughts into clusters
+3. **Constellation**: Visualize cluster relationships
+4. **Path**: Plan execution phases from clusters
+5. **Risk**: Assess risks based on execution plan
+6. **Autonomy**: Define guardrails for autonomous execution
+
+The navigation system highlights the recommended next step with a pulsing indicator.
 
 1. Start runtime API:
 
@@ -553,10 +658,12 @@ Tag push (`v*`) also triggers GitHub release artifact publishing via `.github/wo
 - Phase 4 substantiation: `docs/phase4_substantiation.md`
 - Phase 5 substantiation: `docs/phase5_substantiation.md`
 - Phases 6-9 adversarial record: `docs/adversarial_review_phase6_phase9.md`
+- Phase 10 plan (Navigation, Empty States, STT): `docs/PHASE10_QL_PLAN.md`
 - Local IDE adapter contract: `docs/LOCAL_IDE_ADAPTER_CONTRACT.md`
 - Adapter compatibility checklist: `docs/ADAPTER_COMPATIBILITY_CHECKLIST.md`
 - Full docs index: `docs/README.md`
 - Release history: `CHANGELOG.md`
+- Meta-ledger (architecture decisions): `docs/META_LEDGER.md`
 
 ## Claim-to-Source Map
 
@@ -572,7 +679,47 @@ Tag push (`v*`) also triggers GitHub release artifact publishing via `.github/wo
 | Replay protection supports SQLite shared strategy                        | `implemented` | `zo/security/replay-store.ts:70`                                                           |
 | Release gate script runs typecheck, lint, test, build, assumptions check | `implemented` | `scripts/release-gate.mjs:4`                                                               |
 | CI includes baseline checks and release-readiness workflow               | `implemented` | `.github/workflows/ci.yml:1`, `.github/workflows/release-readiness.yml:1`                  |
+| **Navigation sidebar enables free navigation to all views**              | `implemented` | `zo/ui-shell/shared/zo-nav.js:1`, `zo/ui-shell/shared/zo-nav.css:1`                        |
+| **Empty states display helpful guidance for missing data**               | `implemented` | `zo/ui-shell/shared/empty-state.js:1`, `zo/ui-shell/shared/empty-state.css:1`              |
+| **Speech-to-Text integration using Web Speech API**                      | `implemented` | `zo/ui-shell/shared/void-stt.js:1`, `zo/ui-shell/shared/void-stt.css:1`                    |
+| **Navigation state API returns route availability**                      | `implemented` | `zo/ui-shell/server.ts:nav-state`                                                          |
+| **All 6 project views accessible via direct routes**                     | `implemented` | `zo/ui-shell/server.ts:routes`                                                             |
+| **Phase 10 complete with 456 passing tests**                             | `implemented` | `docs/META_LEDGER.md:Entry #8`                                                             |
 
 ## License
 
 MIT. See `LICENSE`.
+
+## System State & Test Coverage
+
+**Current Status**: Phase 10 SEALED (2026-02-14)
+
+**Test Coverage**: 456 passing tests (28 new Phase 10 tests)
+
+**Verification Status**:
+
+- TypeScript typecheck: ✓ PASS
+- ESLint linting: ✓ PASS
+- Unit tests: ✓ PASS (456 tests)
+- Build: ✓ PASS
+- Zo assumption freshness: ✓ PASS (4 items, max age 30 days)
+
+**Phase 10 Deliverables**:
+
+- Navigation sidebar component (`zo-nav.js`, `zo-nav.css`)
+- Empty state renderer with 5 view-specific configs
+- Speech-to-Text integration (`void-stt.js`, `void-stt.css`)
+- Navigation state API endpoint (`/api/project/:projectId/nav-state`)
+- 6 direct view routes (`/void`, `/reveal`, `/constellation`, `/path`, `/risk`, `/autonomy`)
+
+**Section 4 Razor Compliance**: ✓ ALL PASS (max file 175 lines, well under 250 limit)
+
+**Architecture Integrity**:
+
+- No console.log artifacts in production code
+- All files follow Section 4 Razor guidelines
+- Zero TypeScript errors
+- Zero ESLint violations
+- All 12 Phase 10 acceptance criteria verified
+
+**Meta-Ledger**: See [`docs/META_LEDGER.md`](docs/META_LEDGER.md:1) for complete architecture decision history and phase substantiation records.

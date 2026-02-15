@@ -9,6 +9,9 @@
   <link rel="stylesheet" href="void.css?v=1">
   <link rel="stylesheet" href="reveal.css?v=1">
   <link rel="stylesheet" href="constellation.css?v=1">
+  <link rel="stylesheet" href="zo-nav.css?v=1">
+  <link rel="stylesheet" href="empty-state.css?v=1">
+  <link rel="stylesheet" href="void-stt.css?v=1">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@500;700;800&display=swap">
 </head>
 <body>
@@ -225,6 +228,24 @@
                     <stop offset="0%" style="stop-color:var(--primary)"/>
                     <stop offset="100%" style="stop-color:var(--accent)"/>
                   </linearGradient>
+                  <!-- Center circle gradient - dark with subtle depth -->
+                  <radialGradient id="center-gradient" cx="50%" cy="50%" r="50%" fx="35%" fy="35%">
+                    <stop offset="0%" stop-color="#1e293b" stop-opacity="1"/>
+                    <stop offset="60%" stop-color="#0f172a" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#020617" stop-opacity="1"/>
+                  </radialGradient>
+                  <!-- Inner center - slightly lighter for depth -->
+                  <radialGradient id="center-gradient-inner" cx="50%" cy="50%" r="50%" fx="30%" fy="30%">
+                    <stop offset="0%" stop-color="#334155" stop-opacity="0.6"/>
+                    <stop offset="40%" stop-color="#1e293b" stop-opacity="0.8"/>
+                    <stop offset="80%" stop-color="#0f172a" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#020617" stop-opacity="1"/>
+                  </radialGradient>
+                  <!-- Cyan glow for ring -->
+                  <filter id="glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
                   <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
                     <feGaussianBlur stdDeviation="4" result="blur"/>
                     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
@@ -234,28 +255,12 @@
                     <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
                   </filter>
                 </defs>
-                <!-- Center Debug Indicator -->
-                <g id="debug-indicator-center">
-                  <circle cx="150" cy="150" r="42" class="debug-indicator-bg"/>
-                  <circle cx="150" cy="150" r="36" class="debug-indicator-inner debug-idle" id="debug-indicator-fill"/>
-                  <text x="150" y="155" class="debug-indicator-text" id="debug-indicator-label">DEBUG</text>
-                </g>
-                <!-- Phase Arc Tracks (background) - 4 phases -->
-                <g id="phase-arcs-tracks">
-                  <path id="arc-track-plan" class="phase-arc-track" d=""/>
-                  <path id="arc-track-audit" class="phase-arc-track" d=""/>
-                  <path id="arc-track-implement" class="phase-arc-track" d=""/>
-                  <path id="arc-track-substantiate" class="phase-arc-track" d=""/>
-                </g>
-                <!-- Phase Arc Fills (progress) - 4 phases -->
-                <g id="phase-arcs-fills">
-                  <path id="arc-fill-plan" class="phase-arc-fill phase-plan" d=""/>
-                  <path id="arc-fill-audit" class="phase-arc-fill phase-audit" d=""/>
-                  <path id="arc-fill-implement" class="phase-arc-fill phase-implement" d=""/>
-                  <path id="arc-fill-substantiate" class="phase-arc-fill phase-substantiate" d=""/>
-                </g>
-                <!-- Phase Labels (populated by JS) -->
+                <!-- Phase Arcs (JS populates both tracks and fills here) -->
+                <g id="phase-arcs-fills"></g>
+                <!-- Phase Labels (positioned outside arcs by JS) -->
                 <g id="phase-labels-group"></g>
+                <!-- Center Debug Indicator (rendered on top of arcs) -->
+                <g id="debug-indicator-center"></g>
               </svg>
             </div>
 
@@ -286,7 +291,7 @@
                 <span id="viz-phase-badge" class="viz-phase-badge">ACTIVE</span>
               </div>
               <div class="visualization-viewport">
-                <svg id="phase-visualization-svg" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                <svg id="phase-visualization-svg" viewBox="0 0 950 340" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <marker id="viz-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
                       <path d="M0,0 L0,8 L8,4 z" class="viz-arrow-head"/>
@@ -532,92 +537,146 @@
       </section>
 
       <section id="panel-projects" class="panel route-panel" data-route="projects">
-        <div class="panel-headline">
-          <h2>Projects</h2>
-          <p class="panel-subline">Project-level planning and tracking surfaces for delivery execution.</p>
-        </div>
+        <!-- Project Navigation Sidebar -->
+        <div id="zo-nav-container" class="zo-nav-in-panel"></div>
 
-        <section class="card void-card">
-          <header class="card-head">
-            <span class="eyebrow">The Void</span>
-            <div class="void-mode-toggle">
-              <button class="void-mode-btn active" type="button" data-mode="genesis">Genesis</button>
-              <button class="void-mode-btn" type="button" data-mode="living">Living</button>
-            </div>
-          </header>
+        <!-- Projects Content Area - Sub-panels for each view -->
+        <div class="projects-content">
+          <div id="empty-state-container"></div>
 
-          <div id="void-container" class="void-container" data-mode="genesis">
-            <div class="void-input-area">
-              <span class="void-thought-count">0 thoughts</span>
-              <textarea
-                class="void-textarea"
-                placeholder="Shout into the void..."
-                rows="4"
-              ></textarea>
-              <div class="void-prompt">
-                <span class="void-prompt-text"></span>
-                <button class="void-prompt-dismiss" type="button" aria-label="Dismiss">&times;</button>
+          <!-- Brainstorm View -->
+          <div id="subpanel-void" class="projects-subpanel active" data-subroute="void">
+            <section class="card brainstorm-card">
+              <header class="card-head brainstorm-header">
+                <div class="brainstorm-title-row">
+                  <span class="eyebrow">Brainstorm</span>
+                  <span class="brainstorm-count">0 ideas</span>
+                </div>
+              </header>
+
+              <div id="void-container" class="brainstorm-container" data-mode="genesis">
+                <div class="brainstorm-input-area">
+                  <textarea
+                    class="brainstorm-textarea"
+                    placeholder="What's on your mind? Add ideas, questions, or goals..."
+                    rows="3"
+                  ></textarea>
+                  <button class="brainstorm-submit-btn" type="button">Add Idea</button>
+                </div>
+
+                <div class="brainstorm-ideas-list">
+                  <!-- Ideas will be rendered here -->
+                </div>
+
+                <div class="void-interim-preview"></div>
+
+                <div class="brainstorm-offer">
+                  <div class="brainstorm-offer-text">
+                    Patterns emerging. Ready to visualize your mind map?
+                  </div>
+                  <button class="brainstorm-offer-btn secondary" type="button">Keep Adding</button>
+                  <button class="brainstorm-offer-btn primary" type="button" data-navigate="constellation">View Mind Map</button>
+                </div>
+
+                <div class="brainstorm-voice-section">
+                  <button class="brainstorm-voice-btn" type="button" aria-label="Voice input" disabled>
+                    <span class="brainstorm-voice-icon">🎤</span>
+                  </button>
+                  <p class="brainstorm-encourage">
+                    Speak freely. Every thought has a place—even the fleeting ones can become foundations.
+                  </p>
+                </div>
+
+                <div class="brainstorm-status">
+                  <span class="brainstorm-status-dot"></span>
+                  <span>AI analyzing connections...</span>
+                </div>
               </div>
-            </div>
+            </section>
+          </div>
 
-            <div class="void-offer">
-              <div class="void-offer-text">
-                Structure is emerging from your thoughts. Ready to see it?
+          <!-- Mind Map View -->
+          <div id="subpanel-constellation" class="projects-subpanel" data-subroute="constellation">
+            <section id="constellation-container" class="mindmap-container">
+              <header class="card-head mindmap-header">
+                <span class="eyebrow">Mind Map</span>
+                <div class="mindmap-view-toggle">
+                  <button class="mindmap-toggle-btn active" data-view="hierarchical" type="button">Tree</button>
+                  <button class="mindmap-toggle-btn" data-view="spatial" type="button">Spatial</button>
+                </div>
+              </header>
+
+              <div class="mindmap-canvas">
+                <div class="constellation-tree"></div>
+                <canvas class="constellation-canvas" style="display: none;"></canvas>
               </div>
-              <button class="void-offer-decline void-offer-btn" type="button">Keep going</button>
-              <button class="void-offer-accept void-offer-btn" type="button">Show me</button>
-            </div>
 
-            <div class="void-genesis-indicator">
-              <span class="void-genesis-dot"></span>
-              <span>Silent processing active</span>
-            </div>
-            <div class="void-living-indicator">
-              <span class="void-genesis-dot"></span>
-              <span>Connected view active</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Reveal Section -->
-        <section id="reveal-container" class="reveal-container">
-          <header class="card-head">
-            <span class="eyebrow">Organization</span>
-          </header>
-
-          <div class="reveal-canvas"></div>
-
-          <div class="reveal-outliers" style="display: none;"></div>
-
-          <div class="reveal-actions">
-            <button class="reveal-btn reveal-btn-cancel" type="button" onclick="ZoReveal.cancel()">
-              Go back
-            </button>
-            <button class="reveal-btn reveal-btn-confirm" type="button" onclick="ZoReveal.confirm()">
-              Confirm organization
-            </button>
-          </div>
-        </section>
-
-        <!-- Constellation Section -->
-        <section id="constellation-container" class="constellation-container">
-          <header class="card-head">
-            <span class="eyebrow">Constellation</span>
-          </header>
-
-          <div class="constellation-toggle">
-            <button class="constellation-toggle-btn active" data-view="hierarchical" type="button">Tree View</button>
-            <button class="constellation-toggle-btn" data-view="spatial" type="button">Spatial View</button>
+              <div class="mindmap-actions">
+                <button class="mindmap-btn secondary" type="button">Edit Clusters</button>
+                <button class="mindmap-btn primary" type="button" data-navigate="path">Generate Roadmap</button>
+              </div>
+            </section>
           </div>
 
-          <div class="constellation-tree"></div>
-          <canvas class="constellation-canvas" style="display: none;"></canvas>
-        </section>
+          <!-- Roadmap View -->
+          <div id="subpanel-path" class="projects-subpanel" data-subroute="path">
+            <section id="roadmap-container" class="roadmap-container">
+              <header class="card-head roadmap-header">
+                <span class="eyebrow">Roadmap</span>
+                <div class="roadmap-view-toggle">
+                  <button class="roadmap-toggle-btn active" data-view="gantt" type="button">Gantt</button>
+                  <button class="roadmap-toggle-btn" data-view="kanban" type="button">Kanban</button>
+                </div>
+              </header>
 
-        <section class="card coming-soon-card">
-          <h3>Project Management</h3>
-          <p>Project selection, Kanban, Gantt Sheet, and Roadmap sub-tabs are in progress and will be added here.</p>
-        </section>
+              <div class="roadmap-gantt-view">
+                <!-- Gantt chart will render here -->
+                <div class="roadmap-empty-state">
+                  <p>Generate phases from your mind map to see your project roadmap.</p>
+                </div>
+              </div>
+
+              <div class="roadmap-kanban-view" style="display: none;">
+                <!-- Kanban board will render here -->
+              </div>
+            </section>
+          </div>
+
+          <!-- Risk Register View -->
+          <div id="subpanel-risk" class="projects-subpanel" data-subroute="risk">
+            <section id="risk-container" class="risk-container">
+              <header class="card-head risk-header">
+                <span class="eyebrow">Risk Register</span>
+                <button class="risk-add-btn" type="button">+ Add Risk</button>
+              </header>
+
+              <div class="risk-list">
+                <!-- Risks will render here -->
+                <div class="risk-empty-state">
+                  <p>Risks will be identified from your roadmap phases.</p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- All Projects View -->
+          <div id="subpanel-autonomy" class="projects-subpanel" data-subroute="autonomy">
+            <section class="projects-list-container">
+              <header class="card-head projects-list-header">
+                <span class="eyebrow">All Projects</span>
+                <button class="projects-new-btn" type="button">+ New Project</button>
+              </header>
+
+              <div class="projects-list">
+                <!-- Project cards will render here -->
+                <div class="projects-empty-state">
+                  <p>No projects yet. Create a new project to get started.</p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+        </div><!-- /.projects-content -->
       </section>
 
       <section id="panel-governance" class="panel route-panel governance-panel governance-shell" data-route="governance">
@@ -684,22 +743,43 @@
         <div class="settings-grid">
           <section class="settings-card">
             <h3>Visual Theme</h3>
-            <div class="settings-control-row">
-              <label class="settings-label" for="theme-select">Theme</label>
-              <select id="theme-select" aria-label="Theme selection">
-                <option value="auto">Auto</option>
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-                <option value="high-contrast">High Contrast</option>
-                <option value="antigravity">Antigravity</option>
-              </select>
-            </div>
-            <div class="theme-quick-picks">
-              <button class="theme-chip" type="button" data-theme-choice="auto">Auto</button>
-              <button class="theme-chip" type="button" data-theme-choice="dark">Dark</button>
-              <button class="theme-chip" type="button" data-theme-choice="light">Light</button>
-              <button class="theme-chip" type="button" data-theme-choice="high-contrast">High Contrast</button>
-              <button class="theme-chip" type="button" data-theme-choice="antigravity">Antigravity</button>
+            <div class="theme-options-grid">
+              <button class="theme-card" type="button" data-theme-choice="mythiq">
+                <div class="theme-swatch">
+                  <span style="background:#0f1219;"></span><span style="background:#6366f1;"></span>
+                </div>
+                <span class="theme-name">Mythiq</span>
+              </button>
+              <button class="theme-card" type="button" data-theme-choice="pegasus">
+                <div class="theme-swatch">
+                  <span style="background:#f1f5f9;"></span><span style="background:#3b82f6;"></span>
+                </div>
+                <span class="theme-name">Pegasus</span>
+              </button>
+              <button class="theme-card" type="button" data-theme-choice="midnight">
+                <div class="theme-swatch">
+                  <span style="background:#000000;"></span><span style="background:#475569;"></span>
+                </div>
+                <span class="theme-name">Midnight</span>
+              </button>
+              <button class="theme-card" type="button" data-theme-choice="aurora">
+                <div class="theme-swatch">
+                  <span style="background:#022c22;"></span><span style="background:#2dd4bf;"></span>
+                </div>
+                <span class="theme-name">Aurora</span>
+              </button>
+              <button class="theme-card" type="button" data-theme-choice="crimson">
+                <div class="theme-swatch">
+                  <span style="background:#2a0a0a;"></span><span style="background:#ef4444;"></span>
+                </div>
+                <span class="theme-name">Crimson</span>
+              </button>
+              <button class="theme-card" type="button" data-theme-choice="atmosphere">
+                <div class="theme-swatch">
+                  <span style="background:linear-gradient(135deg, #0f172a, #334155);"></span><span style="background:linear-gradient(45deg, #38bdf8, #facc15);"></span>
+                </div>
+                <span class="theme-name">Atmosphere</span>
+              </button>
             </div>
           </section>
 
@@ -723,12 +803,59 @@
     </section>
   </div>
 
+  <!-- Navigation & Empty States -->
+  <script src="zo-nav.js?v=1"></script>
+  <script src="empty-state.js?v=1"></script>
+  <script src="empty-reveal.js?v=1"></script>
+  <script src="empty-constellation.js?v=1"></script>
+  <script src="empty-path.js?v=1"></script>
+  <script src="empty-risk.js?v=1"></script>
+  <script src="empty-autonomy.js?v=1"></script>
+  <script src="void-stt.js?v=1"></script>
+
+  <!-- Core Components -->
   <script src="void.js?v=1"></script>
   <script src="reveal.js?v=1"></script>
   <script src="reveal-drag.js?v=1"></script>
   <script src="constellation-tree.js?v=1"></script>
   <script src="constellation-spatial.js?v=1"></script>
   <script type="module" src="legacy/main.js?v=101"></script>
+
+  <!-- Initialize Navigation -->
+  <script>
+    (function() {
+      var navContainer = document.getElementById('zo-nav-container');
+      var emptyContainer = document.getElementById('empty-state-container');
+
+      if (window.ZoNav && navContainer) {
+        ZoNav.mount(navContainer);
+
+        // Handle navigation events
+        ZoNav.onNavigate = function(route) {
+          // Show/hide views based on route
+          var views = {
+            void: document.getElementById('void-container'),
+            reveal: document.querySelector('.reveal-container'),
+            constellation: document.getElementById('constellation-container')
+          };
+
+          // Hide all views
+          Object.keys(views).forEach(function(key) {
+            if (views[key]) views[key].style.display = 'none';
+          });
+
+          // Show current view
+          if (views[route]) {
+            views[route].style.display = '';
+          }
+        };
+      }
+
+      if (window.EmptyStateRenderer && emptyContainer) {
+        EmptyStateRenderer.mount(emptyContainer);
+      }
+    })();
+  </script>
 </body>
 </html>
 

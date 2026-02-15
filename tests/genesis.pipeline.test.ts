@@ -6,7 +6,15 @@
  * @module tests/genesis.pipeline.test
  */
 
-import { describe, it, expect, beforeAll, afterAll, vi } from "vitest";
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  afterEach,
+  vi,
+} from "vitest";
 import { DuckDBClient } from "../zo/storage/duckdb-client";
 import { ProjectTabStorage } from "../zo/project-tab/storage";
 import { GenesisPipeline } from "../zo/genesis/pipeline";
@@ -20,8 +28,9 @@ class MockEmbeddingService implements EmbeddingService {
   async embed(text: string): Promise<EmbeddingResult> {
     // Generate deterministic embedding based on text hash
     const hash = text.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
-    const values = Array.from({ length: 384 }, (_, i) =>
-      Math.sin(hash + i) * 0.5 + 0.5
+    const values = Array.from(
+      { length: 384 },
+      (_, i) => Math.sin(hash + i) * 0.5 + 0.5,
     );
 
     return {
@@ -57,6 +66,7 @@ describe("GenesisPipeline", () => {
   let db: DuckDBClient;
   let storage: ProjectTabStorage;
   let pipeline: GenesisPipeline;
+  let eventUnsubscribers: (() => void)[] = [];
 
   const suffix = Date.now();
   const testProjectId = `pipeline-test-${suffix}`;
@@ -93,14 +103,23 @@ describe("GenesisPipeline", () => {
     });
   });
 
-  afterAll(() => {
+  afterEach(() => {
+    // Clean up event handlers after each test
+    for (const unsubscribe of eventUnsubscribers) {
+      unsubscribe();
+    }
+    eventUnsubscribers = [];
     pipeline.clearPendingTimeouts();
+  });
+
+  afterAll(() => {
     db.close();
   });
 
   it("emits thought_added event immediately", async () => {
     const events: GenesisEvent[] = [];
-    pipeline.onEvent((e) => events.push(e));
+    const unsubscribe = pipeline.onEvent((e) => events.push(e));
+    eventUnsubscribers.push(unsubscribe);
 
     // Create and queue a thought
     const thought = await storage.createThought({
@@ -118,6 +137,7 @@ describe("GenesisPipeline", () => {
   it("debounces rapid thought additions", async () => {
     const events: GenesisEvent[] = [];
     const unsubscribe = pipeline.onEvent((e) => events.push(e));
+    eventUnsubscribers.push(unsubscribe);
 
     // Queue multiple thoughts rapidly
     for (let i = 0; i < 5; i++) {
@@ -134,10 +154,10 @@ describe("GenesisPipeline", () => {
 
     // Should have 5 thought_added events but only 1 clustering_started
     const thoughtAddedCount = events.filter(
-      (e) => e.type === "thought_added"
+      (e) => e.type === "thought_added",
     ).length;
     const clusteringStartedCount = events.filter(
-      (e) => e.type === "clustering_started"
+      (e) => e.type === "clustering_started",
     ).length;
 
     expect(thoughtAddedCount).toBe(5);
@@ -167,6 +187,7 @@ describe("GenesisPipeline", () => {
   it("emits correct event sequence", async () => {
     const events: GenesisEvent[] = [];
     const unsubscribe = pipeline.onEvent((e) => events.push(e));
+    eventUnsubscribers.push(unsubscribe);
 
     const sessionId = `sequence-test-${Date.now()}`;
     await storage.createGenesisSession({
@@ -234,20 +255,21 @@ describe("GenesisPipeline", () => {
 
   it("throws error for non-existent session", async () => {
     await expect(
-      pipeline.processSession("non-existent-session")
+      pipeline.processSession("non-existent-session"),
     ).rejects.toThrow("Session not found");
   });
 
   it("supports unsubscribing from events", () => {
     const events: GenesisEvent[] = [];
     const unsubscribe = pipeline.onEvent((e) => events.push(e));
+    eventUnsubscribers.push(unsubscribe);
 
-    pipeline.queueThought("test", "thought-1");
+    pipeline.queueThought(testSessionId, "thought-1");
     expect(events).toHaveLength(1);
 
     unsubscribe();
 
-    pipeline.queueThought("test", "thought-2");
+    pipeline.queueThought(testSessionId, "thought-2");
     expect(events).toHaveLength(1); // Still 1, not 2
   });
 

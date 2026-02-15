@@ -118,7 +118,8 @@ describe("QoreUiShellServer", () => {
       expect(consoleHtml.includes('data-route="projects"')).toBe(true);
       expect(consoleHtml.includes("Persona profile management UI is in progress")).toBe(true);
       expect(consoleHtml.includes("Workflow authoring and sequencing controls are in progress")).toBe(true);
-      expect(consoleHtml.includes("Kanban, Gantt Sheet, and Roadmap sub-tabs are in progress")).toBe(true);
+      expect(consoleHtml.includes('data-view="gantt"')).toBe(true);
+      expect(consoleHtml.includes('data-view="kanban"')).toBe(true);
       expect(consoleHtml.includes("Persona Management UI is planned")).toBe(true);
       expect(consoleHtml.includes("Add Projects tab with project selector")).toBe(true);
       expect(consoleHtml.includes("Add dedicated Agent Persona and Workflows tabs")).toBe(true);

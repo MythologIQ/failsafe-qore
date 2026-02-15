@@ -26,6 +26,8 @@
   var promptTextEl = null;
   var offerEl = null;
   var countEl = null;
+  var micBtn = null;
+  var interimPreview = null;
 
   // Calibrated questions for early silence
   var CALIBRATED_QUESTIONS = [
@@ -52,9 +54,12 @@
     promptTextEl = container.querySelector('.void-prompt-text');
     offerEl = container.querySelector('.void-offer');
     countEl = container.querySelector('.void-thought-count');
+    micBtn = container.querySelector('.void-mic-btn');
+    interimPreview = container.querySelector('.void-interim-preview');
 
     bindEvents();
     checkSavedSession();
+    initSTT();
   }
 
   function bindEvents() {
@@ -346,6 +351,63 @@
   function getProjectId() {
     var params = new URLSearchParams(window.location.search);
     return params.get('project') || 'default-project';
+  }
+
+  // Speech-to-Text Integration
+  function initSTT() {
+    if (!window.VoidSTT || !VoidSTT.isSupported()) {
+      if (micBtn) micBtn.style.display = 'none';
+      return;
+    }
+
+    VoidSTT.init();
+    if (micBtn) micBtn.disabled = false;
+
+    VoidSTT.onTranscript = function(text, isFinal) {
+      if (isFinal) {
+        textarea.value += (textarea.value ? ' ' : '') + text;
+        submitThought();
+        hideInterimPreview();
+      } else {
+        showInterimPreview(text);
+      }
+    };
+
+    VoidSTT.onError = function(error) {
+      if (micBtn) micBtn.classList.add('void-mic-btn--error');
+      setTimeout(function() {
+        if (micBtn) micBtn.classList.remove('void-mic-btn--error');
+      }, 2000);
+    };
+
+    VoidSTT.onStateChange = function(isListening) {
+      if (micBtn) {
+        if (isListening) {
+          micBtn.classList.add('void-mic-btn--listening');
+        } else {
+          micBtn.classList.remove('void-mic-btn--listening');
+          hideInterimPreview();
+        }
+      }
+    };
+
+    if (micBtn) {
+      micBtn.addEventListener('click', function() {
+        VoidSTT.toggle();
+      });
+    }
+  }
+
+  function showInterimPreview(text) {
+    if (!interimPreview) return;
+    interimPreview.textContent = text;
+    interimPreview.classList.add('void-interim-preview--visible');
+  }
+
+  function hideInterimPreview() {
+    if (!interimPreview) return;
+    interimPreview.textContent = '';
+    interimPreview.classList.remove('void-interim-preview--visible');
   }
 
   // Initialize on DOM ready

@@ -64,8 +64,10 @@ export class CircularPhasesPanel {
     }
 
     indicator.innerHTML = `
-      <circle class="debug-indicator-bg" cx="${this.cx}" cy="${this.cy}" r="42" />
-      <circle class="debug-indicator-inner ${stateClass}" cx="${this.cx}" cy="${this.cy}" r="36" />
+      <circle class="debug-indicator-glow-ring" cx="${this.cx}" cy="${this.cy}" r="52" filter="url(#glow-cyan)" />
+      <circle class="debug-indicator-bg" cx="${this.cx}" cy="${this.cy}" r="50" />
+      <circle class="debug-indicator-inner ${stateClass}" cx="${this.cx}" cy="${this.cy}" r="44" />
+      <circle class="debug-indicator-ring" cx="${this.cx}" cy="${this.cy}" r="47" />
       <text class="debug-indicator-text ${stateClass}" x="${this.cx}" y="${this.cy + 5}">${label}</text>
     `;
   }
@@ -121,7 +123,7 @@ export class CircularPhasesPanel {
 
     let html = '';
     let currentAngle = this.startAngle;
-    const labelRadius = this.trackRadius + 30; // 115px (pulled in slightly from 125)
+    const labelRadius = this.trackRadius + 55; // 140px - push labels outside the arcs
 
     this.phases.forEach((phaseConfig) => {
       const midAngle = currentAngle + this.arcPerPhase / 2;

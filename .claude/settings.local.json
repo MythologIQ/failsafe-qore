@@ -14,7 +14,8 @@
       "Bash(npm run build:*)",
       "Bash(node -e:*)",
       "Bash(ls -la \"g:\\\\MythologIQ\\\\FailSafe-Qore\\\\.agent\\\\scripts\"\" 2>&1 || dir \"g:MythologIQFailSafe-Qore.agentscripts\"\")",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(find:*)"
     ]
   }
 }

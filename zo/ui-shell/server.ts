@@ -1051,6 +1051,122 @@ export class QoreUiShellServer {
       return this.sendJson(res, 200, { ok: true, projectId, fromId, toId });
     }
 
+    // ========================================================================
+    // Risk API Endpoints
+    // ========================================================================
+
+    if (method === "GET" && pathname.match(/^\/api\/risk\/[^/]+$/)) {
+      const projectId = pathname.split("/")[3];
+      return this.sendJson(res, 200, {
+        projectId,
+        risks: [],
+        matrix: [[], [], []],
+        unresolvedCount: 0,
+        mitigatedCount: 0,
+      });
+    }
+
+    if (method === "POST" && pathname.match(/^\/api\/risk\/[^/]+$/)) {
+      const projectId = pathname.split("/")[3];
+      const body = await this.readBody(req) as {
+        description: string;
+        likelihood: string;
+        impact: string;
+      };
+      const riskId = `risk-${Date.now()}`;
+      return this.sendJson(res, 200, {
+        ok: true,
+        projectId,
+        riskId,
+        description: body.description,
+        likelihood: body.likelihood,
+        impact: body.impact,
+      });
+    }
+
+    if (method === "PATCH" && pathname.match(/^\/api\/risk\/[^/]+\/[^/]+$/)) {
+      const parts = pathname.split("/");
+      const projectId = parts[3];
+      const riskId = parts[4];
+      const body = await this.readBody(req) as { status?: string };
+      return this.sendJson(res, 200, { ok: true, projectId, riskId, status: body.status });
+    }
+
+    if (method === "POST" && pathname.match(/^\/api\/risk\/[^/]+\/[^/]+\/guardrail$/)) {
+      const parts = pathname.split("/");
+      const projectId = parts[3];
+      const riskId = parts[4];
+      const guardrailId = `guard-${Date.now()}`;
+      return this.sendJson(res, 200, { ok: true, projectId, riskId, guardrailId });
+    }
+
+    // ========================================================================
+    // Autonomy API Endpoints
+    // ========================================================================
+
+    if (method === "GET" && pathname.match(/^\/api\/autonomy\/[^/]+\/readiness$/)) {
+      const projectId = pathname.split("/")[3];
+      return this.sendJson(res, 200, {
+        projectId,
+        isReady: false,
+        checks: [],
+        blockerCount: 0,
+        warningCount: 0,
+      });
+    }
+
+    if (method === "POST" && pathname.match(/^\/api\/autonomy\/[^/]+\/start$/)) {
+      const projectId = pathname.split("/")[3];
+      const executionId = `exec-${Date.now()}`;
+      return this.sendJson(res, 200, { ok: true, projectId, executionId });
+    }
+
+    // ========================================================================
+    // Navigation State API Endpoint
+    // ========================================================================
+
+    if (method === "GET" && pathname.match(/^\/api\/project\/[^/]+\/nav-state$/)) {
+      const projectId = pathname.split("/")[3];
+      const routes = {
+        void: { hasData: true, count: 0 },
+        reveal: { hasData: false, count: 0 },
+        constellation: { hasData: false, count: 0 },
+        path: { hasData: false, count: 0 },
+        risk: { hasData: false, count: 0 },
+        autonomy: { hasData: false, isReady: false },
+      };
+      const recommendedNext = "void";
+      return this.sendJson(res, 200, { projectId, routes, recommendedNext });
+    }
+
+    // ========================================================================
+    // Direct View Routes (Open Navigation)
+    // ========================================================================
+
+    if (method === "GET" && pathname === "/void") {
+      return this.serveUiEntry(res, null);
+    }
+
+    if (method === "GET" && pathname === "/reveal") {
+      return this.serveUiEntry(res, null);
+    }
+
+    if (method === "GET" && pathname === "/constellation") {
+      return this.serveUiEntry(res, null);
+    }
+
+    if (method === "GET" && pathname === "/path") {
+      return this.serveUiEntry(res, null);
+    }
+
+    if (method === "GET" && pathname === "/risk") {
+      return this.serveUiEntry(res, null);
+    }
+
+    if (method === "GET" && pathname === "/autonomy") {
+      return this.serveUiEntry(res, null);
+    }
+
     if (method === "POST" && pathname === "/api/zo/ask") {
       const zoBaseUrl = this.options.zoApiBaseUrl || process.env.ZO_API_BASE_URL || "https://api.zo.computer";
       const body = await this.readBody(req);

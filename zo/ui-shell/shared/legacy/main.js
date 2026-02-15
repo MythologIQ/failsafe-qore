@@ -164,19 +164,13 @@ function clearError() {
 }
 
 function applyTheme() {
-  const allowedThemes = new Set(['auto', 'light', 'dark', 'high-contrast', 'antigravity']);
+  const allowedThemes = new Set(['mythiq', 'pegasus', 'midnight', 'aurora', 'crimson', 'atmosphere']);
   const stored = String(localStorage.getItem('failsafe.theme') || '').toLowerCase();
   const requested = String(new URLSearchParams(window.location.search).get('theme') || '').toLowerCase();
-  let theme = allowedThemes.has(requested) ? requested : (allowedThemes.has(stored) ? stored : 'auto');
-  if (theme !== 'auto') {
-    elements.root.setAttribute('data-theme', theme);
-    stateStore.patch({ theme });
-    return;
-  }
-  const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const applied = dark ? 'dark' : 'light';
-  elements.root.setAttribute('data-theme', applied);
-  stateStore.patch({ theme: 'auto' });
+  let theme = allowedThemes.has(requested) ? requested : (allowedThemes.has(stored) ? stored : 'mythiq');
+  
+  elements.root.setAttribute('data-theme', theme);
+  stateStore.patch({ theme });
 }
 
 function applyRoute(route) {

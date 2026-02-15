@@ -1,16 +1,10 @@
 function applyMonitorTheme() {
-  const allowedThemes = new Set(['auto', 'light', 'dark', 'high-contrast', 'antigravity']);
+  const allowedThemes = new Set(['mythiq', 'pegasus', 'midnight', 'aurora', 'crimson', 'atmosphere']);
   const params = new URLSearchParams(window.location.search || '');
   const requested = String(params.get('theme') || '').toLowerCase();
   const stored = String(localStorage.getItem('failsafe.theme') || '').toLowerCase();
-  const selected = allowedThemes.has(requested) ? requested : (allowedThemes.has(stored) ? stored : 'auto');
-  const root = document.documentElement;
-  if (selected === 'auto') {
-    const dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    root.setAttribute('data-theme', dark ? 'dark' : 'light');
-    return;
-  }
-  root.setAttribute('data-theme', selected);
+  const selected = allowedThemes.has(requested) ? requested : (allowedThemes.has(stored) ? stored : 'mythiq');
+  document.documentElement.setAttribute('data-theme', selected);
 }
 
 class WebPanelClient {
