@@ -4,16 +4,24 @@ import { PolicyEngine } from "../../policy/engine/PolicyEngine";
 import { EvaluationRouter } from "../../risk/engine/EvaluationRouter";
 import { defaultQoreConfig } from "@mythologiq/qore-contracts/runtime/QoreConfig";
 import { InMemorySecretStore } from "../support/InMemoryStores";
+import { getSecretStore } from "../support/SecureSecretStore";
 import { QoreRuntimeService } from "./QoreRuntimeService";
 import { LocalApiServer } from "./LocalApiServer";
 
 async function main(): Promise<void> {
   const workspace = process.cwd();
   const policyDir = path.join(workspace, "policy", "definitions");
-  const ledgerPath = process.env.QORE_LEDGER_PATH ?? path.join(workspace, ".failsafe", "ledger", "soa_ledger.db");
+  const ledgerPath =
+    process.env.QORE_LEDGER_PATH ??
+    path.join(workspace, ".failsafe", "ledger", "soa_ledger.db");
   const apiHost = process.env.QORE_API_HOST ?? "127.0.0.1";
   const apiPort = Number(process.env.QORE_API_PORT ?? "7777");
-  const apiKey = process.env.QORE_API_KEY;
+
+  // Use SecureSecretStore for secrets (prioritizes env vars, then secure config files)
+  const secretStore = getSecretStore(workspace);
+  const apiKey =
+    secretStore.getSecret("QORE_API_KEY") || process.env.QORE_API_KEY;
+
   const publicHealth =
     String(process.env.QORE_API_PUBLIC_HEALTH ?? "false").toLowerCase() ===
     "true";
@@ -47,4 +55,3 @@ void main().catch((error) => {
   console.error("failed to start qore runtime service", error);
   process.exit(1);
 });
-

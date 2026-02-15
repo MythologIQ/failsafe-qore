@@ -117,9 +117,41 @@ ensure_clean_tree() {
   if [[ "${ALLOW_DIRTY}" == "true" ]]; then
     return
   fi
-  if [[ -n "$(git status --porcelain)" ]]; then
-    die "working tree is dirty; commit/stash first or rerun with --allow-dirty"
+  
+  local dirty_files
+  dirty_files="$(git status --porcelain)"
+  
+  if [[ -z "${dirty_files}" ]]; then
+    return
   fi
+  
+  # Check if dirty files are only secret files that should be ignored
+  local only_secrets=true
+  while IFS= read -r line; do
+    local file
+    file="${line#?? }"  # Remove status prefix (e.g., "M ", "?? ")
+    
+    # Check if file is a secret file that should be ignored
+    if [[ ! "${file}" =~ ^\.failsafe/.*\.env$ ]] && [[ ! "${file}" =~ ^\.env$ ]] && [[ ! "${file}" =~ ^\.env\..*$ ]]; then
+      only_secrets=false
+      break
+    fi
+  done <<< "${dirty_files}"
+  
+  if [[ "${only_secrets}" == "true" ]]; then
+    log "WARNING: working tree has secret files that should not be tracked by git"
+    log "Secret files detected:"
+    echo "${dirty_files}" | sed 's/^/  /'
+    log ""
+    log "Recommendation: Untrack these files with:"
+    log "  git rm --cached \$(git ls-files .failsafe/*.env .env .env.*)"
+    log "  git commit -m 'stop tracking secret files'"
+    log ""
+    log "Proceeding with update (secret files will be preserved locally)"
+    return
+  fi
+  
+  die "working tree is dirty; commit/stash first or rerun with --allow-dirty"
 }
 
 create_backup() {

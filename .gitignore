@@ -1,16 +1,31 @@
 node_modules/
 dist/
 coverage/
+
+# Environment variables with secrets (never commit these)
 .env
 .env.*
+
+# Database files
 *.db
 *.db-shm
 *.db-wal
+
+# System files
 .DS_Store
 Thumbs.db
 .vscode/
+
+# FailSafe runtime state and secrets (never commit these)
+# Contains sensitive data: API keys, tokens, actor keys, etc.
 .failsafe/
+
+# Agent workspace (may contain sensitive data)
 .agent/
+
+# Private documentation
 PRIVATE/
 docs-private/
+
+# Windows null device
 nul

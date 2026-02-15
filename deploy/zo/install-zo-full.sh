@@ -379,16 +379,27 @@ write_config_file() {
 
 write_zo_handoff_env_file() {
   local repo_dir="$1"
-  HANDOFF_ENV_FILE="${repo_dir}/.failsafe/zo-native-ai.env"
-  mkdir -p "$(dirname "${HANDOFF_ENV_FILE}")"
+  
+  # Use secure user config directory instead of repo directory
+  local user_config_dir="${HOME}/.config/failsafe-qore"
+  HANDOFF_ENV_FILE="${user_config_dir}/secrets.env"
+  
+  mkdir -p "${user_config_dir}"
   {
-    printf 'export QORE_API_KEY=%q\n' "${QORE_API_KEY}"
-    printf 'export QORE_UI_BASIC_AUTH_USER=%q\n' "${QORE_UI_BASIC_AUTH_USER}"
-    printf 'export QORE_UI_BASIC_AUTH_PASS=%q\n' "${QORE_UI_BASIC_AUTH_PASS}"
-    printf 'export QORE_UI_TOTP_SECRET=%q\n' "${QORE_UI_TOTP_SECRET}"
-    printf 'export QORE_UI_ADMIN_TOKEN=%q\n' "${QORE_UI_ADMIN_TOKEN}"
+    printf '# FailSafe-Qore Secrets\n' 
+    printf '# Generated: %s\n' "$(date -Iseconds)"
+    printf '# WARNING: This file contains sensitive information\n'
+    printf '# DO NOT commit to version control\n'
+    printf '\n'
+    printf 'QORE_API_KEY=%q\n' "${QORE_API_KEY}"
+    printf 'QORE_UI_BASIC_AUTH_USER=%q\n' "${QORE_UI_BASIC_AUTH_USER}"
+    printf 'QORE_UI_BASIC_AUTH_PASS=%q\n' "${QORE_UI_BASIC_AUTH_PASS}"
+    printf 'QORE_UI_TOTP_SECRET=%q\n' "${QORE_UI_TOTP_SECRET}"
+    printf 'QORE_UI_ADMIN_TOKEN=%q\n' "${QORE_UI_ADMIN_TOKEN}"
   } > "${HANDOFF_ENV_FILE}"
   chmod 600 "${HANDOFF_ENV_FILE}" || true
+  
+  log "secrets written to secure location: ${HANDOFF_ENV_FILE}"
 }
 
 validate_or_prepare_services() {
